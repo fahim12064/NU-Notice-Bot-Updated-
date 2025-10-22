@@ -11,7 +11,7 @@ from datetime import datetime
 # --- Configuration ---
 CSV_FILE_NAME = "scraped_notices.csv"
 USER_IDS_FILE = "user_ids.json"
-TELEGRAM_BOT_TOKEN = "8010920969:AAG5FHpgU3Z1B32f3IDtZWenHEjR-aLA3do"
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 BASE_URL = "https://www.nu.ac.bd/"
 
 # ---------- Utility Functions ----------
