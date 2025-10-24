@@ -14,6 +14,38 @@ USER_IDS_FILE = "user_ids.json"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 BASE_URL = "https://www.nu.ac.bd/"
 
+
+# ---------- GitHub Workflow Trigger ----------
+
+def trigger_github_workflow():
+    """Trigger GitHub workflow manually via API"""
+    GITHUB_TOKEN = os.getenv("TOKE_GITHUB_BOT")
+    if not GITHUB_TOKEN:
+        print("❌ GITHUB_TOKEN not set in secrets.")
+        return
+
+    GITHUB_OWNER = "fahim12064"  
+    GITHUB_REPO = "NU-Notice-Bot-Updated-"
+    WORKFLOW_FILE = "main.yml" 
+    REF = "main"
+
+    url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/actions/workflows/{WORKFLOW_FILE}/dispatches"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+    data = {"ref": REF}
+
+    try:
+        r = requests.post(url, headers=headers, json=data, timeout=15)
+        if r.status_code == 204:
+            print("✅ GitHub workflow triggered successfully!")
+        else:
+            print(f"❌ Workflow trigger failed ({r.status_code}): {r.text}")
+    except Exception as e:
+        print(f"⚠️ Error triggering workflow: {e}")
+
+
 # ---------- Utility Functions ----------
 
 def load_user_ids():
@@ -130,6 +162,23 @@ def handle_telegram_updates():
                     requests.post(send_url, json=payload, timeout=10)
                 except Exception as e:
                     print(f"❌ Failed to send welcome message to {chat_id}: {e}")
+            elif msg["text"].strip().lower() == "scrape":
+                first_name = msg.get("from", {}).get("first_name", "বন্ধু")
+                print(f"⚡ Scrape command received from {first_name} ({chat_id})")
+
+            # ✅ টেলিগ্রামে উত্তর পাঠানো
+            try:
+                reply_text = "🔄 GitHub workflow চলছে, একটু অপেক্ষা করুন..."
+                requests.post(
+                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                    json={"chat_id": chat_id, "text": reply_text},
+                    timeout=10
+                )
+            except Exception as e:
+                print(f"❌ রিপ্লাই পাঠাতে ব্যর্থ: {e}")
+
+            # 👉 GitHub workflow ট্রিগার করা হচ্ছে
+            trigger_github_workflow()
 
     # Save new users
     if new_users_found:
