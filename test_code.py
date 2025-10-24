@@ -162,11 +162,11 @@ def handle_telegram_updates():
                     requests.post(send_url, json=payload, timeout=10)
                 except Exception as e:
                     print(f"❌ Failed to send welcome message to {chat_id}: {e}")
-            elif msg["text"].strip().lower() == "scrape":
-                first_name = msg.get("from", {}).get("first_name", "বন্ধু")
-                print(f"⚡ Scrape command received from {first_name} ({chat_id})")
+        elif text.strip().lower() == "scrape":
+            first_name = msg.get("from", {}).get("first_name", "বন্ধু")
+            print(f"⚡ Scrape command received from {first_name} ({chat_id})")
 
-            # ✅ টেলিগ্রামে উত্তর পাঠানো
+            # ✅ টেলিগ্রামে রিপ্লাই পাঠানো
             try:
                 reply_text = "🔄 GitHub workflow চলছে, একটু অপেক্ষা করুন..."
                 requests.post(
@@ -177,7 +177,7 @@ def handle_telegram_updates():
             except Exception as e:
                 print(f"❌ রিপ্লাই পাঠাতে ব্যর্থ: {e}")
 
-            # 👉 GitHub workflow ট্রিগার করা হচ্ছে
+            # 👉 এখন GitHub workflow ট্রিগার করো
             trigger_github_workflow()
 
     # Save new users
