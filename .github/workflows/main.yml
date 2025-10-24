@@ -2,8 +2,10 @@ name: NU notice Scraper
 
 on:
   schedule:
-    # Run every day at 9:00 PM UTC (which is 3:00 AM Bangladesh time)
-    - cron: '0 21 * * *'
+    # Run every day at 1:00 PM BD time (7:00 AM UTC)
+    - cron: '0 7 * * *'
+    # Run every day at 9:00 PM BD time (3:00 PM UTC)
+    - cron: '0 15 * * *'
   workflow_dispatch:
 
 permissions:
