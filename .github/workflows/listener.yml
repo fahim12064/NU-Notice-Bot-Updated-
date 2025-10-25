@@ -33,7 +33,7 @@ jobs:
       - name: Run Telegram Listener Bot
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.TOKE_GITHUB_BOT }}
           GITHUB_OWNER: "fahim12064"
           GITHUB_REPO: "NU-Notice-Bot-Updated-"
         run: python listener.py
