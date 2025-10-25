@@ -5,7 +5,7 @@ import time
 
 # --- Configuration ---
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-GITHUB_TOKEN = os.getenv("TOKE_GITHUB_BOT")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_OWNER = "fahim12064"
 GITHUB_REPO = "NU-Notice-Bot-Updated-"
 WORKFLOW_FILE = "main.yml"
