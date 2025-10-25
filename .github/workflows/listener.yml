@@ -1,0 +1,58 @@
+# .github/workflows/scraper.yml
+
+name: listener-scraper
+
+on:
+  schedule:
+    # প্রতি ৩ মিনিট পর পর এই workflow চলবে
+    # গুরুত্ত্বপূর্ণ: GitHub Actions এ schedule সর্বনিম্ন ৫ মিনিট পর পর চলে।
+    # '*/3 * * * *' লিখলে এটি প্রায় প্রতি ৫ মিনিটে একবার রান হবে।
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # ম্যানুয়ালি চালানোর জন্য
+
+permissions:
+  contents: write # কোড push করার জন্য পারমিশন
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright requests Pillow
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run Scraper Script
+        run: python listener.py
+        env:
+          # আপনার স্ক্রিনশট অনুযায়ী Secret-এর নামগুলো ব্যবহার করা হয়েছে
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TOKE_GITHUB_BOT: ${{ secrets.TOKE_GITHUB_BOT }} # এই Secret টিও যোগ করা হলো
+
+      - name: Commit and push if there are changes
+        run: |
+          # Git user কনফিগার করা
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # রিপোজিটরিতে নতুন পরিবর্তন যোগ করা
+          git add -A
+          
+          # যদি কোনো পরিবর্তন থাকে, তাহলে commit এবং push করা
+          if ! git diff --staged --quiet; then
+            git commit -m "CI: Update scraped data"
+            git push
+          else
+            echo "No changes to commit."
+          fi
